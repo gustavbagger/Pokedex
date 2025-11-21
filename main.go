@@ -9,6 +9,13 @@ import (
 )
 
 func main() {
+	Supported := map[string]cliCommand{
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    CExit,
+		},
+	}
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
