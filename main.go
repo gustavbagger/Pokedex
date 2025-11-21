@@ -8,30 +8,24 @@ import (
 	"github.com/gustavbagger/Pokedex/commands"
 )
 
-type cliCommand struct {
-	name        string
-	description string
-	callback    func() error
-}
-
-var Supported = map[string]cliCommand{
-	"exit": {
-		name:        "exit",
-		description: "Exit the Pokedex",
-		callback:    commands.CExit,
-	},
-}
-
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
+
+	cfg := &commands.Config{
+		Next:     "https://pokeapi.co/api/v2/location-area/",
+		Previous: "",
+	}
+
+	commandsMap := commands.Support(cfg)
+
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
 		command := scanner.Text()
-		if cli, ok := Supported[command]; ok {
-			err := cli.callback
-			if err != nil {
-				fmt.Errorf("callback error: %v", err)
+
+		if cli, ok := commandsMap[command]; ok {
+			if err := cli.Callback(); err != nil {
+				fmt.Printf("callback error: %v\n", err)
 				return
 			}
 		} else {
