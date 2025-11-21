@@ -12,10 +12,11 @@ func CExit(cfg *Config) error {
 }
 
 func CHelp(cfg *Config) error {
-	fmt.Println("Welcome to the Pokedex!\nUsage:\n")
+	fmt.Println("Welcome to the Pokedex!\nUsage:")
 	for _, value := range Support(cfg) {
-		fmt.Printf("%v: %v\n", value.Name, value.Description)
+		fmt.Printf("\n%v: %v", value.Name, value.Description)
 	}
+	fmt.Println("")
 	return nil
 }
 
