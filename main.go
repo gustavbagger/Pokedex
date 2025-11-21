@@ -4,7 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
+
+	"github.com/gustavbagger/Pokedex/helpers"
 )
 
 func main() {
@@ -13,6 +14,14 @@ func main() {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
 		text := scanner.Text()
-		fmt.Printf("Your command was: %s\n", strings.Fields(text)[0])
+		cleaned := helpers.CleanInput(text)
+		if len(cleaned) == 0 {
+			fmt.Println("Your command was: ")
+		} else {
+			fmt.Printf(
+				"Your command was: %s\n",
+				cleaned[0],
+			)
+		}
 	}
 }
