@@ -1,5 +1,9 @@
 package commands
 
+import (
+	"github.com/gustavbagger/Pokedex/internal"
+)
+
 type CliCommand struct {
 	Name        string
 	Description string
@@ -12,7 +16,7 @@ type Config struct {
 	Previous string
 }
 
-func Support(cfg *Config) map[string]CliCommand {
+func Support(cfg *Config, cache *pokecache.Cache) map[string]CliCommand {
 	return map[string]CliCommand{
 		"exit": {
 			Name:        "exit",
@@ -22,17 +26,17 @@ func Support(cfg *Config) map[string]CliCommand {
 		"help": {
 			Name:        "help",
 			Description: "Displays a help message",
-			Callback:    func() error { return CHelp(cfg) },
+			Callback:    func() error { return CHelp(cfg, cache) },
 		},
 		"map": {
 			Name:        "map",
 			Description: "Next 20 locations in Pokemon",
-			Callback:    func() error { return CMap(cfg) },
+			Callback:    func() error { return CMap(cfg, cache) },
 		},
 		"mapb": {
 			Name:        "mapb",
 			Description: "Previous 20 locations in Pokemon",
-			Callback:    func() error { return CMapb(cfg) },
+			Callback:    func() error { return CMapb(cfg, cache) },
 		},
 	}
 }

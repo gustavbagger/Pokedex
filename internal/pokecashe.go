@@ -8,6 +8,7 @@ import (
 type Cache struct {
 	data map[string]cacheEntry
 	mu sync.Mutex
+	interval	time.Duration
 }
 
 type cacheEntry struct {
@@ -15,17 +16,38 @@ type cacheEntry struct {
 	val []byte
 }
 
-func NewCache(d map[string]cacheEntry, m sync.Mutex) *Cache {
-	new_cache := Cache{
-		data: d,
-		mu: m,
+func NewCache(t time.Duration) *Cache {
+	c := Cache{
+		data: map[string]cacheEntry{},
+		interval: t,
 	}
-	return &new_cache
+	return &c
 }
 
-func (c *Cache) Add(key string, val []byte) {
+func (c *Cache) Add(key string, entry []byte) {
+	c.mu.Lock()
 	c.data[key] = cacheEntry{
 		createdAt: time.Now(),
-		val: val,
+		val: entry,
 	}
+	c.mu.Unlock()
+}
+
+func (c *Cache) Get(key string) ([]byte,bool) {
+	c.mu.Lock()
+	if entry,ok := c.data[key]; ok {
+		return entry.val,true
+	}
+	c.mu.Unlock()
+	return nil,false
+}
+
+func (c *Cache) ReapLoop() {
+	c.mu.Lock()
+	for key,entry := range c.data {
+		if time.Since(entry.createdAt) > c.interval { 
+		delete(c.data,key)
+		}
+	}
+	c.mu.Unlock()
 }

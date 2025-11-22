@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"os"
+	"github.com/gustavbagger/Pokedex/internal"
 )
 
 func CExit(cfg *Config) error {
@@ -11,23 +12,23 @@ func CExit(cfg *Config) error {
 	return nil
 }
 
-func CHelp(cfg *Config) error {
+func CHelp(cfg *Config, cache *pokecache.Cache) error {
 	fmt.Println("Welcome to the Pokedex!\nUsage:")
-	for _, value := range Support(cfg) {
+	for _, value := range Support(cfg,cache) {
 		fmt.Printf("\n%v: %v", value.Name, value.Description)
 	}
 	fmt.Println("")
 	return nil
 }
 
-func CMap(cfg *Config) error {
-	return Maps(cfg.Next, cfg)
+func CMap(cfg *Config,  cache *pokecache.Cache) error {
+	return Maps(cfg.Next, cfg, cache)
 }
 
-func CMapb(cfg *Config) error {
+func CMapb(cfg *Config,  cache *pokecache.Cache) error {
 	if cfg.Previous == "" {
 		fmt.Println("you're on the first page")
 		return nil
 	}
-	return Maps(cfg.Previous, cfg)
+	return Maps(cfg.Previous, cfg, cache)
 }
