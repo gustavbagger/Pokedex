@@ -1,8 +1,6 @@
 package commands
 
-import (
-	"github.com/gustavbagger/Pokedex/internal"
-)
+import pokecache "github.com/gustavbagger/Pokedex/internal"
 
 type CliCommand struct {
 	Name        string
@@ -12,8 +10,9 @@ type CliCommand struct {
 }
 
 type Config struct {
-	Next     string
-	Previous string
+	Next      string
+	Currently string
+	Previous  string
 }
 
 func Support(cfg *Config, cache *pokecache.Cache) map[string]CliCommand {
@@ -38,6 +37,11 @@ func Support(cfg *Config, cache *pokecache.Cache) map[string]CliCommand {
 			Description: "Previous 20 locations in Pokemon",
 			Callback:    func() error { return CMapb(cfg, cache) },
 		},
+		"explore": {
+			Name:        "explore",
+			Description: "List Pokemon at location",
+			Callback:    func() error { return CExpl(cfg, cache) },
+		},
 	}
 }
 
@@ -49,4 +53,57 @@ type LocationArea struct {
 		Name string `json:"name"`
 		URL  string `json:"url"`
 	} `json:"results"`
+}
+
+type Place struct {
+	EncounterMethodRates []struct {
+		EncounterMethod struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"encounter_method"`
+		VersionDetails []struct {
+			Rate    int `json:"rate"`
+			Version struct {
+				Name string `json:"name"`
+				URL  string `json:"url"`
+			} `json:"version"`
+		} `json:"version_details"`
+	} `json:"encounter_method_rates"`
+	GameIndex int `json:"game_index"`
+	ID        int `json:"id"`
+	Location  struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"location"`
+	Name  string `json:"name"`
+	Names []struct {
+		Language struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"language"`
+		Name string `json:"name"`
+	} `json:"names"`
+	PokemonEncounters []struct {
+		Pokemon struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"pokemon"`
+		VersionDetails []struct {
+			EncounterDetails []struct {
+				Chance          int   `json:"chance"`
+				ConditionValues []any `json:"condition_values"`
+				MaxLevel        int   `json:"max_level"`
+				Method          struct {
+					Name string `json:"name"`
+					URL  string `json:"url"`
+				} `json:"method"`
+				MinLevel int `json:"min_level"`
+			} `json:"encounter_details"`
+			MaxChance int `json:"max_chance"`
+			Version   struct {
+				Name string `json:"name"`
+				URL  string `json:"url"`
+			} `json:"version"`
+		} `json:"version_details"`
+	} `json:"pokemon_encounters"`
 }

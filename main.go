@@ -19,7 +19,6 @@ func main() {
 	}
 	interval := 5 * time.Second
 	cache := pokecache.NewCache(interval)
-
 	commandsMap := commands.Support(cfg, cache)
 
 	for {
