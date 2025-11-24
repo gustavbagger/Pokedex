@@ -53,6 +53,11 @@ func Support(cfg *Config, cache *pokecache.Cache) map[string]CliCommand {
 			Description: "Shows details of <pokemon> in Pokedex",
 			Callback:    func(pokemon string) error { return CInsp(cfg, cache, pokemon) },
 		},
+		"pokedex": {
+			Name:        "pokedex",
+			Description: "List of pokemon in Pokedex",
+			Callback:    func(string) error { return CPoke(cfg) },
+		},
 	}
 }
 

@@ -63,7 +63,7 @@ func CCat(cfg *Config, cache *pokecache.Cache, pokemon string) error {
 	if err != nil {
 		return err
 	}
-	probability := 20.0 // / float32(data_pokemon.BaseExperience)
+	probability := 20.0 / float32(data_pokemon.BaseExperience)
 	// fmt.Println(probability)
 	if rand.Float32() < float32(probability) {
 		cfg.Pokedex[pokemon] = data_pokemon
@@ -88,6 +88,14 @@ func CInsp(cfg *Config, cache *pokecache.Cache, pokemon string) error {
 	fmt.Println("Types:")
 	for _, t := range data_pokemon.Types {
 		fmt.Printf("  - %s\n", t.Type.Name)
+	}
+	return nil
+}
+
+func CPoke(cfg *Config) error {
+	fmt.Println("Your Pokedex:")
+	for pokemon := range cfg.Pokedex {
+		fmt.Printf("  - %s\n", pokemon)
 	}
 	return nil
 }
