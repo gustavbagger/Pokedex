@@ -35,8 +35,29 @@ func CMapb(cfg *Config, cache *pokecache.Cache) error {
 	return Maps(cfg.Previous, cfg, cache)
 }
 
-func CExpl(cfg *Config, cache *pokecache.Cache) error {
+func CExpl(cfg *Config, cache *pokecache.Cache, places []string) error {
+	if len(places) == 0 {
+		fmt.Println("No location given")
+		return nil
+	}
+	url := "https://pokeapi.co/api/v2/location-area/" + places[0] + "/"
 
+	fmt.Printf("Exploring %s...\n", places[0])
+	data_place, err := helpers.RetrieveCache[Place](url, cache)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Found Pokemon:\n")
+	for _, encounter := range data_place.PokemonEncounters {
+		fmt.Println(encounter.Pokemon.Name)
+	}
+	return nil
+}
+
+/*
+old CExpl entire region
+
+func CExpl(cfg *Config, cache *pokecache.Cache) error {
 	data, err := helpers.RetrieveCache[LocationArea](cfg.Currently, cache)
 	if err != nil {
 		return err
@@ -57,3 +78,4 @@ func CExpl(cfg *Config, cache *pokecache.Cache) error {
 
 	return nil
 }
+*/

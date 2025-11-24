@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gustavbagger/Pokedex/commands"
@@ -24,9 +25,13 @@ func main() {
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
-		command := scanner.Text()
+		input := strings.Fields(scanner.Text())
+
+		command := input[0]
+		args := input[1:]
+
 		if cli, ok := commandsMap[command]; ok {
-			if err := cli.Callback(); err != nil {
+			if err := cli.Callback(args); err != nil {
 				fmt.Printf("callback error: %v\n", err)
 				return
 			}

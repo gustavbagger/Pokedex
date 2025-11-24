@@ -5,7 +5,7 @@ import pokecache "github.com/gustavbagger/Pokedex/internal"
 type CliCommand struct {
 	Name        string
 	Description string
-	Callback    func() error
+	Callback    func([]string) error
 	Config      *Config
 }
 
@@ -20,27 +20,27 @@ func Support(cfg *Config, cache *pokecache.Cache) map[string]CliCommand {
 		"exit": {
 			Name:        "exit",
 			Description: "Exit the Pokedex",
-			Callback:    func() error { return CExit(cfg) },
+			Callback:    func([]string) error { return CExit(cfg) },
 		},
 		"help": {
 			Name:        "help",
 			Description: "Displays a help message",
-			Callback:    func() error { return CHelp(cfg, cache) },
+			Callback:    func([]string) error { return CHelp(cfg, cache) },
 		},
 		"map": {
 			Name:        "map",
 			Description: "Next 20 locations in Pokemon",
-			Callback:    func() error { return CMap(cfg, cache) },
+			Callback:    func([]string) error { return CMap(cfg, cache) },
 		},
 		"mapb": {
 			Name:        "mapb",
 			Description: "Previous 20 locations in Pokemon",
-			Callback:    func() error { return CMapb(cfg, cache) },
+			Callback:    func([]string) error { return CMapb(cfg, cache) },
 		},
 		"explore": {
 			Name:        "explore",
 			Description: "List Pokemon at location",
-			Callback:    func() error { return CExpl(cfg, cache) },
+			Callback:    func(places []string) error { return CExpl(cfg, cache, places) },
 		},
 	}
 }
