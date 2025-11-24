@@ -6,9 +6,8 @@ import (
 	"os"
 	"time"
 
-
 	"github.com/gustavbagger/Pokedex/commands"
-	"github.com/gustavbagger/Pokedex/internal"
+	pokecache "github.com/gustavbagger/Pokedex/internal"
 )
 
 func main() {
@@ -18,20 +17,21 @@ func main() {
 		Next:     "https://pokeapi.co/api/v2/location-area/",
 		Previous: "",
 	}
-	cache := pokecache.NewCache(5*time.Second)
+	interval := 5 * time.Second
+	cache := pokecache.NewCache(interval)
 
-	commandsMap := commands.Support(cfg,cache)
-	
+	commandsMap := commands.Support(cfg, cache)
+
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
 		command := scanner.Text()
-		cache.ReapLoop()
 		if cli, ok := commandsMap[command]; ok {
 			if err := cli.Callback(); err != nil {
 				fmt.Printf("callback error: %v\n", err)
 				return
 			}
+
 		} else {
 			fmt.Print("Unknown command\n")
 		}

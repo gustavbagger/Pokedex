@@ -5,17 +5,20 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"github.com/gustavbagger/Pokedex/internal"
+
+	pokecache "github.com/gustavbagger/Pokedex/internal"
 )
 
 func Maps(url string, cfg *Config, cache *pokecache.Cache) error {
 	var data LocationArea
-	
-	if entry,ok := cache.Get(url); ok {
+
+	if entry, ok := cache.Get(url); ok {
+		fmt.Println("Retrieving from cache")
 		if err := json.Unmarshal(entry, &data); err != nil {
 			return err
 		}
 	} else {
+		fmt.Println("Retrieving from API")
 		rec, err := http.Get(url)
 		if err != nil {
 			return err
@@ -26,13 +29,13 @@ func Maps(url string, cfg *Config, cache *pokecache.Cache) error {
 		if err != nil {
 			return err
 		}
-		cache.Add(url,info)	
+		cache.Add(url, info)
 
 		if err := json.Unmarshal(info, &data); err != nil {
 			return err
 		}
 	}
-	
+
 	cfg.Next = data.Next
 	cfg.Previous = data.Previous
 
