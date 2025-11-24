@@ -5,7 +5,7 @@ import pokecache "github.com/gustavbagger/Pokedex/internal"
 type CliCommand struct {
 	Name        string
 	Description string
-	Callback    func([]string) error
+	Callback    func(string) error
 	Config      *Config
 }
 
@@ -13,6 +13,7 @@ type Config struct {
 	Next      string
 	Currently string
 	Previous  string
+	Pokedex   map[string]Pokemon
 }
 
 func Support(cfg *Config, cache *pokecache.Cache) map[string]CliCommand {
@@ -20,27 +21,37 @@ func Support(cfg *Config, cache *pokecache.Cache) map[string]CliCommand {
 		"exit": {
 			Name:        "exit",
 			Description: "Exit the Pokedex",
-			Callback:    func([]string) error { return CExit(cfg) },
+			Callback:    func(string) error { return CExit(cfg) },
 		},
 		"help": {
 			Name:        "help",
 			Description: "Displays a help message",
-			Callback:    func([]string) error { return CHelp(cfg, cache) },
+			Callback:    func(string) error { return CHelp(cfg, cache) },
 		},
 		"map": {
 			Name:        "map",
 			Description: "Next 20 locations in Pokemon",
-			Callback:    func([]string) error { return CMap(cfg, cache) },
+			Callback:    func(string) error { return CMap(cfg, cache) },
 		},
 		"mapb": {
 			Name:        "mapb",
 			Description: "Previous 20 locations in Pokemon",
-			Callback:    func([]string) error { return CMapb(cfg, cache) },
+			Callback:    func(string) error { return CMapb(cfg, cache) },
 		},
 		"explore": {
 			Name:        "explore",
-			Description: "List Pokemon at location",
-			Callback:    func(places []string) error { return CExpl(cfg, cache, places) },
+			Description: "List Pokemon at <location>",
+			Callback:    func(place string) error { return CExpl(cfg, cache, place) },
+		},
+		"catch": {
+			Name:        "catch",
+			Description: "Try catching <pokemon>",
+			Callback:    func(pokemon string) error { return CCat(cfg, cache, pokemon) },
+		},
+		"inspect": {
+			Name:        "inspect",
+			Description: "Shows details of <pokemon> in Pokedex",
+			Callback:    func(pokemon string) error { return CInsp(cfg, cache, pokemon) },
 		},
 	}
 }
@@ -84,10 +95,7 @@ type Place struct {
 		Name string `json:"name"`
 	} `json:"names"`
 	PokemonEncounters []struct {
-		Pokemon struct {
-			Name string `json:"name"`
-			URL  string `json:"url"`
-		} `json:"pokemon"`
+		Pokemon        Pokemon `json:"pokemon"`
 		VersionDetails []struct {
 			EncounterDetails []struct {
 				Chance          int   `json:"chance"`
@@ -106,4 +114,26 @@ type Place struct {
 			} `json:"version"`
 		} `json:"version_details"`
 	} `json:"pokemon_encounters"`
+}
+
+type Pokemon struct {
+	Name           string `json:"name"`
+	URL            string `json:"url"`
+	BaseExperience int    `json:"base_experience"`
+	Height         int    `json:"height"`
+	Stats          []struct {
+		BaseStat int `json:"base_stat"`
+		Effort   int `json:"effort`
+		Stat     struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:stat`
+	} `json:stats`
+	Types []struct {
+		Type struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"type"`
+	} `json:"types"`
+	Weight int `json:"weight"`
 }

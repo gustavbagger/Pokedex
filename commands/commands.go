@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 
 	"github.com/gustavbagger/Pokedex/helpers"
@@ -35,14 +36,11 @@ func CMapb(cfg *Config, cache *pokecache.Cache) error {
 	return Maps(cfg.Previous, cfg, cache)
 }
 
-func CExpl(cfg *Config, cache *pokecache.Cache, places []string) error {
-	if len(places) == 0 {
-		fmt.Println("No location given")
-		return nil
-	}
-	url := "https://pokeapi.co/api/v2/location-area/" + places[0] + "/"
+func CExpl(cfg *Config, cache *pokecache.Cache, place string) error {
 
-	fmt.Printf("Exploring %s...\n", places[0])
+	url := "https://pokeapi.co/api/v2/location-area/" + place + "/"
+
+	fmt.Printf("Exploring %s...\n", place)
 	data_place, err := helpers.RetrieveCache[Place](url, cache)
 	if err != nil {
 		return err
@@ -50,6 +48,46 @@ func CExpl(cfg *Config, cache *pokecache.Cache, places []string) error {
 	fmt.Printf("Found Pokemon:\n")
 	for _, encounter := range data_place.PokemonEncounters {
 		fmt.Println(encounter.Pokemon.Name)
+	}
+	return nil
+}
+
+func CCat(cfg *Config, cache *pokecache.Cache, pokemon string) error {
+	url := "https://pokeapi.co/api/v2/pokemon/" + pokemon + "/"
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon)
+	if _, ok := cfg.Pokedex[pokemon]; ok {
+		fmt.Printf("%s is already in your Pokedex.\n", pokemon)
+		return nil
+	}
+	data_pokemon, err := helpers.RetrieveCache[Pokemon](url, cache)
+	if err != nil {
+		return err
+	}
+	probability := 20.0 // / float32(data_pokemon.BaseExperience)
+	// fmt.Println(probability)
+	if rand.Float32() < float32(probability) {
+		cfg.Pokedex[pokemon] = data_pokemon
+		fmt.Printf("%s was caught and added to your Pokedex!\n", pokemon)
+	} else {
+		fmt.Printf("%s ran away...\n", pokemon)
+	}
+	return nil
+}
+
+func CInsp(cfg *Config, cache *pokecache.Cache, pokemon string) error {
+	if _, ok := cfg.Pokedex[pokemon]; !ok {
+		fmt.Println("you have not caught that pokemon")
+		return nil
+	}
+	data_pokemon := cfg.Pokedex[pokemon]
+	fmt.Printf("Name: %v\nHeight: %v\nStats:\n", data_pokemon.Name, data_pokemon.Height)
+
+	for _, s := range data_pokemon.Stats {
+		fmt.Printf("  -%s: %v\n", s.Stat.Name, s.BaseStat)
+	}
+	fmt.Println("Types:")
+	for _, t := range data_pokemon.Types {
+		fmt.Printf("  - %s\n", t.Type.Name)
 	}
 	return nil
 }
